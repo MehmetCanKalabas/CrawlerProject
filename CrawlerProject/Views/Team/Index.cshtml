@@ -1,0 +1,109 @@
+﻿@using CrawlerProject.Models.DTO;
+@model List<Team>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    int count = 0;
+}
+
+<div class="card shadow">
+    <div class="card-header border-0">
+        <h3 class="mb-0 text-center">Takım Listesi</h3>
+        <button id="openAddTeamModal" class="btn btn-primary text-left"><i class="fa fa-plus" aria-hidden="true"></i></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Takım</th>
+                    <th scope="col">Logo</th>
+                    <th class="text-right">Aksiyonlar</th>
+                </tr>
+            </thead>
+            @foreach (var item in Model)
+            {
+                count++;
+
+                <tr>
+                    <th scope="row">
+                        <div class="media align-items-center">
+                            <div class="media-body">
+                                <span class="mb-0 text-sm">@count</span>
+                            </div>
+                        </div>
+                    </th>
+                    <td id="@item.Id">
+                        @item.Name
+                    </td>
+                    <td>
+                        <div class="logoWrapper-@item.Id">
+                            <img id="logo-@item.Id" src=@item.Logo class="img-fluid" />
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <button id="btnUpdateTeam" class="btn btn-primary" onclick="onClickUpdateTeam(this,'@item.Id')">
+                            <i class="fa fa-pen" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="onClickDeleteTeam(this,'@item.Id')">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<br />
+
+
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="upload-form">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Takım Ekleme Pop-up</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">                            
+                                <div class="form-group">
+                                    <label for="teamName">Takım İsmi</label>
+                                    <input id="teamName" type="text" class="form-control" />
+                                    <h5 id="emailvalid"
+                                        style="color: red; display: none">
+                                        Your email must be a valid email
+                                    </h5>
+
+                                    <div>
+                                        <label for="Image" class="form-label">Logo</label>
+                                        <input class="form-control" type="file" id="logo" onchange="preview()">
+                                    </div>
+                                    <img id="frame" src="" class="img-fluid" />
+                                    <button onclick="clearImage()" class="btn btn-primary mt-3">Temizle</button>
+
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnAddUpdateTeam" type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/scripts/Team/team.js"></script>
+}
+
+

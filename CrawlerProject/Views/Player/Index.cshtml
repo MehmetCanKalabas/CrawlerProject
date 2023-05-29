@@ -1,0 +1,205 @@
+﻿@using CrawlerProject.Models.DTO;
+@model PlayerViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    int count = 0;
+}
+
+@*<style>
+    .birth-date {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .birth-date__full {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .birth-date__age {
+        font-size: 0.8em;
+        color: gray;
+    }
+</style>*@
+
+<link href="~/css/playerindexcss.css" rel="stylesheet" />
+
+<div class="card shadow">
+    <div class="card-header border-0">
+        <h3 class="mb-0">Oyuncu Listesi</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Ad-Soyad</th>
+                    <th scope="col">Doğum Tarihi</th>
+                    <th>Bulunduğu Takım</th>
+                    <th>Aksiyonlar</th>
+                </tr>
+            </thead>
+            @foreach (var item in Model.Players)
+            {
+                count++;
+
+                <tr>
+                    <th scope="row">
+                        <div class="media align-items-center">
+                            <div class="media-body">
+                                <span class="mb-0 text-sm">@count</span>
+                            </div>
+                        </div>
+                    </th>
+                    <td>@item.Name @item.LastName</td>
+                    <td>
+                        <div class="birth-date">
+                            <div class="birth-date__full">@item.BirthDay.ToString("dd.MM.yyyy")</div>
+                            <div class="birth-date__age">(@(DateTime.Now.Year - item.BirthDay.Year))</div>
+                        </div>
+                    </td>                  
+                    <td>
+                        @item.TeamInfo.TeamName
+                    </td>
+                    <td class="text-right">
+                        <button class="btn btn-primary" onclick="onClickUpdatePlayer(this,'@item.Id')">
+                            <i class="fa fa-pen" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="onClickDeletePlayer(this,'@item.Id')">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<br />
+<button id="openAddPlayerModal" class="btn btn-primary">Yeni Oyuncu Ekle</button>
+
+
+<div id="addPlayerModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Oyuncu Ekleme Paneli</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="form-group">
+                                    <label for="firstName">Ad</label>
+                                    <input id="firstName" type="text" class="form-control" />
+                                    <h5 id="firstNameValid"
+                                        style="color: red; display: none">
+                                        Lütfen kontrol ediniz.
+                                    </h5>
+                                <br />
+                                    <label for="lastName">Soyad</label>
+                                    <input id="lastName" type="text" class="form-control" />
+                                    <h5 id="lastNameValid"
+                                        style="color: red; display: none">
+                                        Lütfen kontrol ediniz.
+                                    </h5>
+                                    <br />
+                                    <label for="birthday">Doğum Tarihi</label>
+                                    <input type="datetime-local" id="birthday" name="birthday" class="form-control">
+                                    <h5 id="birthdayValid"
+                                        style="color: red; display: none">
+                                        Lütfen kontrol ediniz.
+                                    </h5>
+                                    <br />
+                                    <div class="form-group">
+                                        <select id="teamId" class="form-select">
+                                            @foreach (var item in Model.Teams)
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnAddPlayer" type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<div id="updatePlayerModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-description"> Yeni Oyuncu Ekleme Paneli </p>
+
+                            <div class="form-group">
+                                <label for="firstName">Ad</label>
+                                <input id="up_firstName" type="text" class="form-control" />
+                                <h5 id="firstNameValid"
+                                    style="color: red; display: none">
+                                    Lütfen kontrol ediniz.
+                                </h5>
+                                <label for="lastName">Soyad</label>
+                                <input id="up_lastName" type="text" class="form-control" />
+                                <h5 id="lastNameValid"
+                                    style="color: red; display: none">
+                                    Lütfen kontrol ediniz.
+                                </h5>
+                                <label for="birthday">Doğum Tarihi</label>
+                                <input type="datetime-local" id="up_birthday" name="birthday" class="form-control">
+                                <h5 id="birthdayValid"
+                                    style="color: red; display: none">
+                                    Lütfen kontrol ediniz.
+                                </h5>
+
+                                <div class="form-group">
+                                    <select id="up_teamId" class="form-select">
+                                        @foreach (var item in Model.Teams)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveChangesUpdatePlayer" type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script src="~/scripts/Player/player.js"></script>
+}

@@ -1,0 +1,15 @@
+﻿.birth-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.birth-date__full {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.birth-date__age {
+    font-size: 0.8em;
+    color: gray;
+}
